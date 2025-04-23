@@ -10,6 +10,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="14.0.0" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
+    <PackageReference Include="MediatR" Version="12.5.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.15">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -19,7 +22,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Loovi.Test.IoC\Loovi.Test.IoC.csproj" />
+    <ProjectReference Include="..\Loovi.Test.Application\Loovi.Test.Application.csproj" />
+    <ProjectReference Include="..\Loovi.Test.Common\Loovi.Test.Common.csproj" />
+    <ProjectReference Include="..\Loovi.Test.ORM\Loovi.Test.ORM.csproj" />
   </ItemGroup>
 
 </Project>

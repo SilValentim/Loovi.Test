@@ -1,3 +1,9 @@
+using Loovi.Test.ORM;
+using Loovi.Test.Application;
+using Microsoft.EntityFrameworkCore;
+using FluentValidation;
+using Loovi.Test.Application.Tasks.CreateTask;
+using Loovi.Test.WebApi.Middleware;
 
 namespace Loovi.Test.WebApi
 {
@@ -14,7 +20,27 @@ namespace Loovi.Test.WebApi
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            //TODO HEALTH CHECKS
+            // builder.AddBasicHealthChecks();
+
+
+            //TODO Authentication
+            //builder.Services.AddJwtAuthentication(builder.Configuration);
+
+            builder.Services.AddAutoMapper(cfg =>
+            {
+                cfg.AddMaps(typeof(Program).Assembly);// WebApi
+                cfg.AddMaps(typeof(Application.DependencyInjection).Assembly); // Application
+            });
+
+            builder.Services
+            .AddApplication()
+            .AddInfrastructure(builder.Configuration);
+
+
             var app = builder.Build();
+
+            app.UseCustomExceptionHandling();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
