@@ -74,7 +74,7 @@ namespace Loovi.Test.ORM.Repositories
         /// <param name="filters">A dictionary of filters to apply to the query.</param>
         /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
         /// <returns>A paginated list of entities.</returns>
-        public async Task<Paginated<Entity>> GetList(
+        protected async Task<Paginated<Entity>> GetList(
             IDictionary<string, string[]> filters,
             CancellationToken cancellationToken)
         {

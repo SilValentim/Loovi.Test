@@ -10,6 +10,8 @@ using Loovi.Test.WebApi.Features.Tasks.UpdateTask;
 using Loovi.Test.Application.Tasks.UpdateTask;
 using Loovi.Test.Application.Tasks.GetTask;
 using Loovi.Test.WebApi.Features.Tasks.CreateTask;
+using Loovi.Test.WebApi.Common;
+using Loovi.Test.Application.Tasks.ListTasks;
 
 namespace Loovi.Test.WebApi.Controllers
 {
@@ -108,20 +110,20 @@ namespace Loovi.Test.WebApi.Controllers
         ///// <param name="parameters">The query parameters.</param>
         ///// <param name="cancellationToken">Cancellation token.</param>
         ///// <returns>The list of tasks.</returns>
-        //[HttpGet]
-        //[ProducesResponseType(typeof(ApiResponseWithData<ListTasksResponse>), StatusCodes.Status200OK)]
-        //[ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
-        //public async Task<IActionResult> GetTasks(
-        //    [FromQuery] IDictionary<string, string[]> parameters,
-        //    CancellationToken cancellationToken)
-        //{
-        //    var command = new ListTasksCommand(parameters);
-        //    var response = await _mediator.Send(command, cancellationToken);
+        [HttpGet]
+        [ProducesResponseType(typeof(ApiResponse<PaginatedResponse<TaskResponse>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<PaginatedResponse<TaskResponse>>), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetTasks(
+            [FromQuery] IDictionary<string, string[]> parameters,
+            CancellationToken cancellationToken)
+        {
+            var command = new ListTasksCommand(parameters);
+            var response = await _mediator.Send(command, cancellationToken);
 
-        //    return Ok(
-        //        _mapper.Map<ListTasksResponse>(response),
-        //        "Tasks retrieved successfully");
-        //}
+            return Ok(
+                _mapper.Map<PaginatedResponse<TaskResponse>>(response),
+                "Tasks retrieved successfully");
+        }
 
         ///// <summary>
         ///// Deletes a task by its ID.

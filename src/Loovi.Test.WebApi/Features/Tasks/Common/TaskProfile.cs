@@ -1,6 +1,8 @@
 ﻿
 using AutoMapper;
+using Loovi.Test.Application.Common;
 using Loovi.Test.Application.Tasks.Common;
+using Loovi.Test.WebApi.Common;
 using Loovi.Test.WebApi.Features.Tasks.Common;
 
 namespace Loovi.Test.WebApi.Features.Tasks.UpdateTask
@@ -11,6 +13,7 @@ namespace Loovi.Test.WebApi.Features.Tasks.UpdateTask
         {
             // Map CreateTaskResult to CreateTaskResponse
             CreateMap<TaskResult, TaskResponse>();
+            CreateMap<PaginatedResult<TaskResult>, PaginatedResponse<TaskResponse>>();
         }
     }
 }

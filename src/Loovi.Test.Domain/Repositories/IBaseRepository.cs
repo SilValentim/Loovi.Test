@@ -10,9 +10,9 @@ namespace Loovi.Test.Domain.Repositories
 {
     public interface IBaseRepository<Entity> where Entity : BaseEntity
     {
-        Task<Paginated<Entity>> GetList(
-            IDictionary<string, string[]> filters,
-            CancellationToken cancellationToken);
+        //Task<Paginated<Entity>> GetList(
+        //    IDictionary<string, string[]> filters,
+        //    CancellationToken cancellationToken);
 
         Task<Entity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
         Task<Entity> CreateAsync(Entity entity, CancellationToken cancellationToken = default);

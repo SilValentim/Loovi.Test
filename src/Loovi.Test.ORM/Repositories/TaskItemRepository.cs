@@ -1,4 +1,5 @@
-﻿using Loovi.Test.Domain.Entities;
+﻿using Loovi.Test.Domain.Common;
+using Loovi.Test.Domain.Entities;
 using Loovi.Test.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -47,6 +48,13 @@ namespace Loovi.Test.ORM.Repositories
             }
 
             return updatedEntity;
+        }
+
+        public async Task<Paginated<TaskItem>> GetTasksAsync(IDictionary<string, string[]> filters,
+            CancellationToken cancellationToken = default)
+        {
+            var result = await GetList(filters, cancellationToken);
+            return result;
         }
     }
 }
