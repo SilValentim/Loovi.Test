@@ -11,8 +11,6 @@ namespace Loovi.Test.WebApi.Features.Tasks.UpdateTask
             // Map CreateTaskRequest to CreateTaskCommand
             CreateMap<UpdateTaskRequest, CreateTaskCommand>();
 
-            // Map CreateTaskResult to CreateTaskResponse
-            CreateMap<TaskResult, TaskResponse>();
         }
     }
 }

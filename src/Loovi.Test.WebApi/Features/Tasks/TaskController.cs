@@ -12,6 +12,7 @@ using Loovi.Test.Application.Tasks.GetTask;
 using Loovi.Test.WebApi.Features.Tasks.CreateTask;
 using Loovi.Test.WebApi.Common;
 using Loovi.Test.Application.Tasks.ListTasks;
+using Loovi.Test.Application.Tasks.DeleteTask;
 
 namespace Loovi.Test.WebApi.Controllers
 {
@@ -125,29 +126,22 @@ namespace Loovi.Test.WebApi.Controllers
                 "Tasks retrieved successfully");
         }
 
-        ///// <summary>
-        ///// Deletes a task by its ID.
-        ///// </summary>
-        ///// <param name="id">The unique identifier of the task to delete.</param>
-        ///// <param name="cancellationToken">Cancellation token.</param>
-        ///// <returns>Success response if the task was deleted.</returns>
-        //[HttpDelete("{id}")]
-        //[ProducesResponseType(typeof(ApiResponseWithData<GetTaskResponse>), StatusCodes.Status200OK)]
-        //[ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
-        //[ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
-        //public async Task<IActionResult> DeleteTask([FromRoute] Guid id, CancellationToken cancellationToken)
-        //{
-        //    var request = new DeleteTaskRequest { Id = id };
-        //    var validator = new DeleteTaskRequestValidator();
-        //    var validationResult = await validator.ValidateAsync(request, cancellationToken);
+        /// <summary>
+        /// Deletes a task by its ID.
+        /// </summary>
+        /// <param name="id">The unique identifier of the task to delete.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>Success response if the task was deleted.</returns>
+        [HttpDelete("{id}")]
+        [ProducesResponseType(typeof(ApiResponse<TaskResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<TaskResponse>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<TaskResponse>), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DeleteTask([FromRoute] Guid id, CancellationToken cancellationToken)
+        {
+            var command = _mapper.Map<DeleteTaskCommand>(id);
+            var task = await _mediator.Send(command, cancellationToken);
 
-        //    if (!validationResult.IsValid)
-        //        return BadRequest(validationResult.Errors);
-
-        //    var command = _mapper.Map<DeleteTaskCommand>(request.Id);
-        //    var task = await _mediator.Send(command, cancellationToken);
-
-        //    return Ok("Task deleted successfully");
-        //}
+            return Ok(_mapper.Map<TaskResponse>(task),"Task deleted successfully");
+        }
     }
 }

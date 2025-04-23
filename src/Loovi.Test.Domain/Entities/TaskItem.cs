@@ -21,11 +21,6 @@ namespace Loovi.Test.Domain.Entities
             public string Description { get; set; }
 
             /// <summary>
-            /// Date and time when the task was created.
-            /// </summary>
-            public DateTime CreationDate { get; set; }
-
-            /// <summary>
             /// Deadline for completing the task.
             /// </summary>
             public DateTime DueDate { get; set; }

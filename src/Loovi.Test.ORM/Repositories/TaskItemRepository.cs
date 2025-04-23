@@ -39,7 +39,9 @@ namespace Loovi.Test.ORM.Repositories
             var currentlyEntity = await GetByIdAsync(updatedEntity.Id, cancellationToken);
 
             updatedEntity.Status = currentlyEntity.Status;
-            updatedEntity.CreationDate = currentlyEntity.CreationDate;
+            updatedEntity.CreatedAt = currentlyEntity.CreatedAt;
+            updatedEntity.Active = currentlyEntity.Active;
+            updatedEntity.UpdatedAt = DateTime.UtcNow;
 
             if (currentlyEntity != null)
             {

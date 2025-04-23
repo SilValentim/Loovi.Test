@@ -1,16 +1,15 @@
 ﻿using FluentValidation;
-using Loovi.Test.Application.Tasks.DeleteTask;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Loovi.Test.Application.Tasks.GetTask
+namespace Loovi.Test.Application.Tasks.DeleteTask
 {
-    public class GetTaskValidator : AbstractValidator<GetTaskCommand>
+    public class DeleteTaskValidator : AbstractValidator<DeleteTaskCommand>
     {
-        public GetTaskValidator()
+        public DeleteTaskValidator()
         {
             RuleFor(request => request.Id)
                 .NotNull().WithMessage("The Id is required.")

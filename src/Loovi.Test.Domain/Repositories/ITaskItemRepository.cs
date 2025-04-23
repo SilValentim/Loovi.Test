@@ -15,4 +15,5 @@ namespace Loovi.Test.Domain.Repositories
 
         Task<Paginated<TaskItem>> GetTasksAsync(IDictionary<string, string[]> filters,
             CancellationToken cancellationToken = default);
+    }
 }

@@ -12,6 +12,11 @@ namespace Loovi.Test.Domain.Common
         /// </summary>
         public virtual Guid Id { get; set; }
 
+        public virtual DateTime UpdatedAt { get; set; }
+        public virtual DateTime CreatedAt { get; set; }
+
+        public virtual bool Active { get; set; } = true;
+
         /// <summary>
         /// Compares the current entity with another entity based on their IDs.
         /// </summary>
@@ -24,6 +29,24 @@ namespace Loovi.Test.Domain.Common
         {
             if (other == null) return 1;
             else return Id.CompareTo(other.Id);
+        }
+
+        /// <summary>
+        /// Activates the task.
+        /// </summary>
+        public void Activate()
+        {
+            Active = true;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        /// <summary>
+        /// Deactivates (digital exclusion) the task.
+        /// </summary>
+        public void Deactivate()
+        {
+            Active = false;
+            UpdatedAt = DateTime.UtcNow;
         }
     }
 }

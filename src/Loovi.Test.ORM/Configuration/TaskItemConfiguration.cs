@@ -29,7 +29,10 @@ namespace Loovi.Test.ORM.Configurations
             builder.Property(t => t.Description)
                 .HasMaxLength(1000);
 
-            builder.Property(t => t.CreationDate)
+            builder.Property(t => t.CreatedAt)
+                .IsRequired();
+
+            builder.Property(t => t.UpdatedAt)
                 .IsRequired();
 
             builder.Property(t => t.DueDate)
@@ -37,7 +40,11 @@ namespace Loovi.Test.ORM.Configurations
 
             builder.Property(t => t.Status)
                 .IsRequired()
-                .HasConversion<string>(); // Store the enum as a string in the database
+                .HasConversion<string>();
+
+            builder.Property(t => t.Active)
+                .IsRequired()
+                .HasDefaultValue(true);
         }
     }
 }
