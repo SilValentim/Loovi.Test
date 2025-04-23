@@ -73,17 +73,17 @@ namespace Loovi.Test.WebApi.Controllers
         /// <param name="request">The task update request.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>The updated task details.</returns>
-        //[HttpPut]
-        //[ProducesResponseType(typeof(ApiResponse<TaskResponse>), StatusCodes.Status200OK)]
-        //[ProducesResponseType(typeof(ApiResponse<TaskResponse>), StatusCodes.Status400BadRequest)]
-        //public async Task<IActionResult> UpdateTask([FromBody] UpdateTaskRequest request, CancellationToken cancellationToken)
-        //{
+        [HttpPut]
+        [ProducesResponseType(typeof(ApiResponse<TaskResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<TaskResponse>), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdateTask([FromBody] UpdateTaskRequest request, CancellationToken cancellationToken)
+        {
 
-        //    var command = _mapper.Map<UpdateTaskCommand>(request);
-        //    var response = await _mediator.Send(command, cancellationToken);
+            var command = _mapper.Map<UpdateTaskCommand>(request);
+            var response = await _mediator.Send(command, cancellationToken);
 
-        //    return Ok(_mapper.Map<TaskResponse>(response), "Task updated successfully");
-        //}
+            return Ok(_mapper.Map<TaskResponse>(response), "Task updated successfully");
+        }
 
         /// <summary>
         /// Retrieves a task by its ID.
