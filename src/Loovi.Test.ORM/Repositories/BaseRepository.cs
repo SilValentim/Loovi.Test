@@ -12,7 +12,7 @@ namespace Loovi.Test.ORM.Repositories
     /// <typeparam name="Entity">The type of the entity that inherits from <see cref="BaseEntity"/>.</typeparam>
     public class BaseRepository<Entity> : IBaseRepository<Entity> where Entity : BaseEntity
     {
-        private readonly MainContext _context;
+        protected readonly MainContext _context;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BaseRepository{Entity}"/> class.

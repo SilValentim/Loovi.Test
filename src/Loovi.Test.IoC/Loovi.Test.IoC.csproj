@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore" Version="2.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Loovi.Test.Application\Loovi.Test.Application.csproj" />
+    <ProjectReference Include="..\Loovi.Test.Common\Loovi.Test.Common.csproj" />
+    <ProjectReference Include="..\Loovi.Test.Domain\Loovi.Test.Domain.csproj" />
     <ProjectReference Include="..\Loovi.Test.ORM\Loovi.Test.ORM.csproj" />
   </ItemGroup>
 
