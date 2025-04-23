@@ -1,14 +1,15 @@
-using Loovi.Test.WebApi.Features.Tasks.CreateTask;
+
 using Loovi.Test.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using MediatR;
-using Loovi.Test.WebApi.Common;
 using Loovi.Test.Application.Tasks.CreateTask;
 using Loovi.Test.Common.Responses;
 using Loovi.Test.WebApi.Features.Tasks.Common;
 using Loovi.Test.WebApi.Features.Tasks.UpdateTask;
 using Loovi.Test.Application.Tasks.UpdateTask;
+using Loovi.Test.Application.Tasks.GetTask;
+using Loovi.Test.WebApi.Features.Tasks.CreateTask;
 
 namespace Loovi.Test.WebApi.Controllers
 {
@@ -62,9 +63,7 @@ namespace Loovi.Test.WebApi.Controllers
         {
             var formattedResponse = ApiResponse<T>.Ok(data, message);
 
-            int httpCode = data == null ? 204 : 200;
-
-            return StatusCode(httpCode, formattedResponse);
+            return StatusCode(200, formattedResponse);
         }
 
         /// <summary>
@@ -91,19 +90,17 @@ namespace Loovi.Test.WebApi.Controllers
         /// <param name="id">The unique identifier of the task.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>The task details if found.</returns>
-        //[HttpGet("{id}")]
-        //[ProducesResponseType(typeof(ApiResponse<TaskResponse>), StatusCodes.Status200OK)]
-        //[ProducesResponseType(typeof(ApiResponse<TaskResponse>), StatusCodes.Status400BadRequest)]
-        //[ProducesResponseType(typeof(ApiResponse<TaskResponse>), StatusCodes.Status404NotFound)]
-        //public async Task<IActionResult> GetTask([FromRoute] Guid id, CancellationToken cancellationToken)
-        //{
-        //    var request = new GetTaskRequest { Id = id };
+        [HttpGet("{id:Guid}")]
+        [ProducesResponseType(typeof(ApiResponse<TaskResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<TaskResponse>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<TaskResponse>), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetTask([FromRoute] Guid id, CancellationToken cancellationToken)
+        {
+            var command = _mapper.Map<GetTaskCommand>(id);
+            var response = await _mediator.Send(command, cancellationToken);
 
-        //    var command = _mapper.Map<GetTaskCommand>(request.Id);
-        //    var response = await _mediator.Send(command, cancellationToken);
-
-        //    return Ok(_mapper.Map<GetTaskResponse>(response), "Task retrieved successfully");
-        //}
+            return Ok(_mapper.Map<TaskResponse>(response), "Task retrieved successfully");
+        }
 
         ///// <summary>
         ///// Retrieves a list of tasks based on query parameters.

@@ -27,19 +27,6 @@ namespace Loovi.Test.WebApi.Middleware
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 context.Response.ContentType = "application/json";
 
-                //var errors = ex.Errors.Select(e => new
-                //{
-                //    Field = e.PropertyName,
-                //    Error = e.ErrorMessage
-                //});
-
-                //await context.Response.WriteAsync(JsonSerializer.Serialize(new
-                //{
-                //    StatusCode = context.Response.StatusCode,
-                //    Message = "Validation failed",
-                //    Errors = errors
-                //}));
-
                 var errors = ex.Errors.Select(e => new ValidationError
                 {
                     Field = e.PropertyName,
@@ -51,6 +38,15 @@ namespace Loovi.Test.WebApi.Middleware
                 await context.Response.WriteAsync(JsonSerializer.Serialize(response));
 
             }
+            catch(KeyNotFoundException ex)
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                context.Response.ContentType = "application/json";
+
+                var response = ApiResponse<object>.Fail(ex.Message);
+
+                await context.Response.WriteAsync(JsonSerializer.Serialize(response));
+            }
             catch (Exception ex)
             {
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
@@ -60,6 +56,8 @@ namespace Loovi.Test.WebApi.Middleware
 
                 await context.Response.WriteAsync(JsonSerializer.Serialize(response));
             }
+ 
+
         }
     }
 }
