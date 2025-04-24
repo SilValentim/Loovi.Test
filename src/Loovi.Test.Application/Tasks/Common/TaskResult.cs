@@ -26,7 +26,13 @@ namespace Loovi.Test.Application.Tasks.Common
         /// <summary>
         /// Date and time when the task was created.
         /// </summary>
-        public DateTime CreationDate { get; set; }
+        public DateTime CreatedAt { get; set; }
+
+        /// <summary>
+        /// Date and time of the task was last updated.
+        /// </summary>
+        public DateTime UpdatedAt { get; set; }
+
 
         /// <summary>
         /// Deadline for completing the task.
@@ -37,5 +43,10 @@ namespace Loovi.Test.Application.Tasks.Common
         /// Current status of the task, indicating its progress.
         /// </summary>
         public TaskItemStatus Status { get; set; }
+
+        /// <summary>
+        /// Soft delete flag.
+        /// </summary>
+        public bool Active { get; set; }
     }
 }

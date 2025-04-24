@@ -38,6 +38,15 @@ namespace Loovi.Test.WebApi.Middleware
                 await context.Response.WriteAsync(JsonSerializer.Serialize(response));
 
             }
+            catch(InvalidOperationException ex)
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                context.Response.ContentType = "application/json";
+
+                var response = ApiResponse<object>.Fail(ex.Message);
+
+                await context.Response.WriteAsync(JsonSerializer.Serialize(response));
+            }
             catch(KeyNotFoundException ex)
             {
                 context.Response.StatusCode = (int)HttpStatusCode.NotFound;
@@ -47,6 +56,15 @@ namespace Loovi.Test.WebApi.Middleware
 
                 await context.Response.WriteAsync(JsonSerializer.Serialize(response));
             }
+            catch (UnauthorizedAccessException ex)
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                context.Response.ContentType = "application/json";
+
+                var response = ApiResponse<object>.Fail(ex.Message);
+
+                await context.Response.WriteAsync(JsonSerializer.Serialize(response));
+            }         
             catch (Exception ex)
             {
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;

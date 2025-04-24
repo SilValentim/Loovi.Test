@@ -7,8 +7,8 @@ namespace Loovi.Test.Domain.Entities
     /// <summary>
         /// Represents a task with basic information, including title, description, dates, and status.
         /// </summary>
-        public class TaskItem : BaseEntity
-        {
+        public class TaskItem : UserOwnedEntity
+    {
 
             /// <summary>
             /// Title of the task.

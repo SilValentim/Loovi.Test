@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using LinqKit;
 using System.Reflection;
 using Loovi.Test.Domain.Repositories;
+using Loovi.Test.Domain.Common.Interfaces;
+using Loovi.Test.Common.Auth.Interfaces;
+using System.Threading;
 
 namespace Loovi.Test.ORM.Repositories
 {
@@ -13,14 +16,16 @@ namespace Loovi.Test.ORM.Repositories
     public class BaseRepository<Entity> : IBaseRepository<Entity> where Entity : BaseEntity
     {
         protected readonly MainContext _context;
+        protected readonly IUserAccessor _userAccessor;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BaseRepository{Entity}"/> class.
         /// </summary>
         /// <param name="context">The database context to be used by the repository.</param>
-        public BaseRepository(MainContext context)
+        public BaseRepository(MainContext context, IUserAccessor userAccessor)
         {
             _context = context;
+            _userAccessor = userAccessor;
         }
 
         /// <summary>
@@ -30,9 +35,24 @@ namespace Loovi.Test.ORM.Repositories
         /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
         /// <returns>The entity if found; otherwise, null.</returns>
         public virtual async Task<Entity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
-        {
-            return await _context.Set<Entity>()
-                .FirstOrDefaultAsync(o => o.Id.CompareTo(id) == 0, cancellationToken);
+        { 
+            if (typeof(IUserIdentity).IsAssignableFrom(typeof(Entity)))
+            {
+                var userId = _userAccessor.GetUserId();
+
+                return await _context.Set<Entity>()
+                    .FirstOrDefaultAsync(
+                        e => e.Id.CompareTo(id) == 0 &&
+                             ((IUserIdentity)e).UserId == userId &&
+                             e.Active,
+                        cancellationToken);
+            }
+            else
+            {
+                return await _context.Set<Entity>()
+                    .FirstOrDefaultAsync(
+                        e => e.Id.CompareTo(id) == 0 && e.Active, cancellationToken);
+            }
         }
 
         /// <summary>
@@ -44,6 +64,12 @@ namespace Loovi.Test.ORM.Repositories
         public virtual async Task<Entity> CreateAsync(Entity entity, CancellationToken cancellationToken = default)
         {
             entity.Id = Guid.NewGuid();
+
+            if (entity is IUserIdentity userOwnedEntity)
+            {
+                userOwnedEntity.UserId = _userAccessor.GetUserId();
+            }
+
             await _context.Set<Entity>().AddAsync(entity, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
             return entity;
@@ -61,6 +87,16 @@ namespace Loovi.Test.ORM.Repositories
             updatedEntity.CreatedAt = currentlyEntity.CreatedAt;
             updatedEntity.Active = currentlyEntity.Active;
             updatedEntity.UpdatedAt = DateTime.UtcNow;
+
+            if (updatedEntity is IUserIdentity ownedEntity)
+            {
+                var currentUserId = _userAccessor.GetUserId();
+                if (ownedEntity.UserId != currentUserId)
+                {
+                    //TODO Add log of possible security attack.
+                    throw new UnauthorizedAccessException("Cannot modify entity owned by another user.");
+                }
+            }
 
             if (currentlyEntity != null)
             {
@@ -106,7 +142,7 @@ namespace Loovi.Test.ORM.Repositories
                 ref filters);
 
             var entityQueryable = _context.Set<Entity>().AsQueryable();
-
+            
             var expressionQueryable = Filter(filters, entityQueryable);
 
             expressionQueryable = Ordering(order, expressionQueryable);
@@ -123,7 +159,23 @@ namespace Loovi.Test.ORM.Repositories
         /// <returns>True if the entity exists; otherwise, false.</returns>
         public async Task<bool> ExistsAsync(Guid id)
         {
-            return await _context.Set<Entity>().AnyAsync(u => u.Id.CompareTo(id) == 0);
+            if (typeof(IUserIdentity).IsAssignableFrom(typeof(Entity)))
+            {
+                var userId = _userAccessor.GetUserId();
+
+                return await _context
+                    .Set<Entity>()
+                    .AnyAsync(u => 
+                        u.Id.CompareTo(id) == 0 &&
+                        ((IUserIdentity)u).UserId == userId);
+            }
+            else
+            {
+                return await _context
+                    .Set<Entity>()
+                    .AnyAsync(u => u.Id.CompareTo(id) == 0);
+            }
+            
         }
 
         #region List Methods
@@ -159,6 +211,14 @@ namespace Loovi.Test.ORM.Repositories
         {
             var expressionFilter = PredicateBuilder.New<Entity>(true);
 
+            expressionFilter = expressionFilter.And(x => x.Active);
+            
+            if (typeof(IUserIdentity).IsAssignableFrom(typeof(Entity)))
+            {
+                expressionFilter = expressionFilter.And(x =>
+                    ((IUserIdentity)x).UserId == _userAccessor.GetUserId());
+            }
+
             foreach (var filter in filters)
             {
                 var propertyName = filter.Key;
@@ -191,6 +251,34 @@ namespace Loovi.Test.ORM.Repositories
                             else
                             {
                                 innerPredicate = innerPredicate.Or(p => EF.Property<string>(p, property.Name) == value);
+                            }
+                        }
+                        else if (property.PropertyType == typeof(DateTime) || property.PropertyType == typeof(DateTime?))
+                        {
+                            if (value.StartsWith(">="))
+                            {
+                                var val = DateTime.Parse(value[2..]);
+                                innerPredicate = innerPredicate.Or(p => EF.Property<DateTime>(p, property.Name) >= val);
+                            }
+                            else if (value.StartsWith("<="))
+                            {
+                                var val = DateTime.Parse(value[2..]);
+                                innerPredicate = innerPredicate.Or(p => EF.Property<DateTime>(p, property.Name) <= val);
+                            }
+                            else if (value.StartsWith(">"))
+                            {
+                                var val = DateTime.Parse(value[1..]);
+                                innerPredicate = innerPredicate.Or(p => EF.Property<DateTime>(p, property.Name) > val);
+                            }
+                            else if (value.StartsWith("<"))
+                            {
+                                var val = DateTime.Parse(value[1..]);
+                                innerPredicate = innerPredicate.Or(p => EF.Property<DateTime>(p, property.Name) < val);
+                            }
+                            else
+                            {
+                                var val = DateTime.Parse(value);
+                                innerPredicate = innerPredicate.Or(p => EF.Property<DateTime>(p, property.Name) == val);
                             }
                         }
                         else
@@ -235,11 +323,11 @@ namespace Loovi.Test.ORM.Repositories
                     {
                         entityQueryable = isFirstOrder
                             ? (descending
-                                ? entityQueryable.OrderByDescending(p => EF.Property<object>(p, propertyName))
-                                : entityQueryable.OrderBy(p => EF.Property<object>(p, propertyName)))
+                                ? entityQueryable.OrderByDescending(p => EF.Property<object>(p, property.Name))
+                                : entityQueryable.OrderBy(p => EF.Property<object>(p, property.Name)))
                             : (descending
-                                ? ((IOrderedQueryable<Entity>)entityQueryable).ThenByDescending(p => EF.Property<object>(p, propertyName))
-                                : ((IOrderedQueryable<Entity>)entityQueryable).ThenBy(p => EF.Property<object>(p, propertyName)));
+                                ? ((IOrderedQueryable<Entity>)entityQueryable).ThenByDescending(p => EF.Property<object>(p, property.Name))
+                                : ((IOrderedQueryable<Entity>)entityQueryable).ThenBy(p => EF.Property<object>(p, property.Name)));
 
                         isFirstOrder = false;
                     }
@@ -274,7 +362,7 @@ namespace Loovi.Test.ORM.Repositories
 
             var result = new Paginated<Entity>
             {
-                Data = paginatedProducts,
+                Items = paginatedProducts,
                 TotalItems = total,
                 CurrentPage = page,
                 TotalPages = totalPages

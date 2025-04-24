@@ -1,3 +1,4 @@
+using Loovi.Test.Domain.Common.Interfaces;
 using System;
 
 namespace Loovi.Test.Domain.Common
@@ -5,7 +6,7 @@ namespace Loovi.Test.Domain.Common
     /// <summary>
     /// Abstract base class for all entity classes, providing a unique identifier and common functionality.
     /// </summary>
-    public abstract class BaseEntity : IComparable<BaseEntity>
+    public abstract class BaseEntity : IComparable<BaseEntity>, IEntity, IAuditable, ISoftDeletable
     {
         /// <summary>
         /// Unique identifier for the entity.
@@ -34,7 +35,7 @@ namespace Loovi.Test.Domain.Common
         /// <summary>
         /// Activates the task.
         /// </summary>
-        public void Activate()
+        public virtual void Activate()
         {
             Active = true;
             UpdatedAt = DateTime.UtcNow;
@@ -43,7 +44,7 @@ namespace Loovi.Test.Domain.Common
         /// <summary>
         /// Deactivates (digital exclusion) the task.
         /// </summary>
-        public void Deactivate()
+        public virtual void Deactivate()
         {
             Active = false;
             UpdatedAt = DateTime.UtcNow;

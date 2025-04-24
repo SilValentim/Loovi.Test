@@ -13,28 +13,25 @@ using Loovi.Test.WebApi.Features.Tasks.CreateTask;
 using Loovi.Test.WebApi.Common;
 using Loovi.Test.Application.Tasks.ListTasks;
 using Loovi.Test.Application.Tasks.DeleteTask;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Loovi.Test.WebApi.Controllers
 {
     /// <summary>
     /// Controller for managing task operations.
     /// </summary>
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class TaskController : ControllerBase
-    {
-        private readonly IMediator _mediator;
-        private readonly IMapper _mapper;
-
-        /// <summary>
+    public class TaskController : BaseController
+    {        /// <summary>
         /// Initializes a new instance of TaskController.
         /// </summary>
         /// <param name="mediator">The mediator instance.</param>
         /// <param name="mapper">The AutoMapper instance.</param>
         public TaskController(IMediator mediator, IMapper mapper)
+            :base (mediator, mapper)
         {
-            _mediator = mediator;
-            _mapper = mapper;
         }
 
         /// <summary>
@@ -52,21 +49,7 @@ namespace Loovi.Test.WebApi.Controllers
             var response = await _mediator.Send(command, cancellationToken);
 
 
-            return Created(response, "Task created successfully");
-        }
-
-        private IActionResult Created<T>(T data, string message)
-        {
-            var formattedResponse = ApiResponse<T>.Ok(data, message);
-
-            return StatusCode(201, formattedResponse);
-        }
-
-        private IActionResult Ok<T>(T data, string message)
-        {
-            var formattedResponse = ApiResponse<T>.Ok(data, message);
-
-            return StatusCode(200, formattedResponse);
+            return Created(_mapper.Map<TaskResponse>(response), "Task created successfully");
         }
 
         /// <summary>

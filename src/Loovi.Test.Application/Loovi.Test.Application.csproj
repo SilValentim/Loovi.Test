@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Loovi.Test.Common\Loovi.Test.Common.csproj" />
     <ProjectReference Include="..\Loovi.Test.Domain\Loovi.Test.Domain.csproj" />
   </ItemGroup>
 

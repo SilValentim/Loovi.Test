@@ -2,6 +2,8 @@
 {
     public class TaskResponse
     {
+        public Guid Id { get; set; }
+
         /// <summary>
         /// Title of the task.
         /// </summary>

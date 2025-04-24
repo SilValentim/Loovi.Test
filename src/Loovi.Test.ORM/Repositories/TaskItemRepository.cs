@@ -1,4 +1,6 @@
-﻿using Loovi.Test.Domain.Common;
+﻿using Loovi.Test.Common.Auth.Interfaces;
+using Loovi.Test.Domain.Common;
+using Loovi.Test.Domain.Common.Interfaces;
 using Loovi.Test.Domain.Entities;
 using Loovi.Test.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +14,8 @@ namespace Loovi.Test.ORM.Repositories
 {
     class TaskItemRepository : BaseRepository<TaskItem>, ITaskItemRepository
     {
-        public TaskItemRepository(MainContext context) : base(context)
+        public TaskItemRepository(MainContext context, IUserAccessor userAccessor) 
+            : base(context, userAccessor)
         {
         }
 
@@ -25,23 +28,35 @@ namespace Loovi.Test.ORM.Repositories
         public async Task<bool> ExistsByTitleAsync(string title, CancellationToken cancellationToken = default)
         {
             return await _context.Tasks
-                .AnyAsync(task => task.Title == title, cancellationToken);
+                .AnyAsync(task => task.Title == title &&
+                                  task.UserId == _userAccessor.GetUserId(), cancellationToken);
         }
 
         public async Task<bool> ExistsSameTitleAndDifferentIdAsync(TaskItem task, CancellationToken cancellationToken = default)
         {
             return await _context.Tasks
-                .AnyAsync(t => t.Id != task.Id && t.Title == task.Title, cancellationToken);
+                 .AnyAsync(t => t.Id != task.Id && 
+                                t.Title == task.Title && 
+                                task.UserId == _userAccessor.GetUserId(), 
+                           cancellationToken);
         }
 
         public override async Task<TaskItem> UpdateAsync(TaskItem updatedEntity, CancellationToken cancellationToken = default)
         {
             var currentlyEntity = await GetByIdAsync(updatedEntity.Id, cancellationToken);
 
+            var currentUserId = _userAccessor.GetUserId();
+            if (currentlyEntity.UserId != currentUserId)
+            {
+                throw new UnauthorizedAccessException("Cannot modify entity owned by another user.");
+            }
+
             updatedEntity.Status = currentlyEntity.Status;
             updatedEntity.CreatedAt = currentlyEntity.CreatedAt;
             updatedEntity.Active = currentlyEntity.Active;
             updatedEntity.UpdatedAt = DateTime.UtcNow;
+            updatedEntity.UserId = currentUserId;
+
 
             if (currentlyEntity != null)
             {
