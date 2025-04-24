@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using FluentValidation;
 using Loovi.Test.Application.Tasks.CreateTask;
 using Loovi.Test.WebApi.Middleware;
+using Loovi.Test.WebApi.Configuration;
 
 namespace Loovi.Test.WebApi
 {
@@ -15,11 +16,6 @@ namespace Loovi.Test.WebApi
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-
             //TODO HEALTH CHECKS
             // builder.AddBasicHealthChecks();
 
@@ -27,15 +23,18 @@ namespace Loovi.Test.WebApi
             //TODO Authentication
             //builder.Services.AddJwtAuthentication(builder.Configuration);
 
-            builder.Services.AddAutoMapper(cfg =>
-            {
-                cfg.AddMaps(typeof(Program).Assembly);// WebApi
-                cfg.AddMaps(typeof(Application.DependencyInjection).Assembly); // Application
-            });
-
             builder.Services
-            .AddApplication()
-            .AddInfrastructure(builder.Configuration);
+                .AddWebApiServices(builder.Configuration);
+
+            // Application and Infrastructure DI
+            builder.Services
+                .AddApplication()
+                .AddInfrastructure(builder.Configuration);
+
+            // Auth
+            builder.Services
+                .AddJwtAuthentication(builder.Configuration)
+                .AddAuthenticationProvider(builder.Configuration);
 
 
             var app = builder.Build();
@@ -51,6 +50,7 @@ namespace Loovi.Test.WebApi
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 

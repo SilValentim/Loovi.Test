@@ -14,7 +14,6 @@ namespace Loovi.Test.Application.Tasks.CreateTask
         public TaskProfile()
         {
             CreateMap<TaskItem, TaskResult>();
-            CreateMap<TaskItem, TaskResult>();
         }
     }
 }

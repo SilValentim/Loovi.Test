@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using LinqKit;
 using System.Reflection;
 using Loovi.Test.Domain.Repositories;
+using Loovi.Test.Domain.Common.Interfaces;
 
 namespace Loovi.Test.ORM.Repositories
 {

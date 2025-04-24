@@ -18,6 +18,7 @@ namespace Loovi.Test.Application
 
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
+
             return services;
         }
     }
