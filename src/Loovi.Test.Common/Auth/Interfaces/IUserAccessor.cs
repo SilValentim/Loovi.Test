@@ -8,7 +8,7 @@ namespace Loovi.Test.Common.Auth.Interfaces
 {
     public interface IUserAccessor
     {
-        string? GetUserId();
+        Guid GetUserId();
         string? GetUsername();
         string? GetRole();
     }

@@ -45,6 +45,9 @@ namespace Loovi.Test.ORM.Configurations
             builder.Property(t => t.Active)
                 .IsRequired()
                 .HasDefaultValue(true);
+
+            builder.Property(t => t.UserId)
+            .IsRequired();
         }
     }
 }

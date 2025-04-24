@@ -12,9 +12,9 @@ namespace Loovi.Test.WebApi.Auth
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public string? GetUserId()
+        public Guid GetUserId()
         {
-            return _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return Guid.Parse(_httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier));
         }
 
         public string? GetUsername()
