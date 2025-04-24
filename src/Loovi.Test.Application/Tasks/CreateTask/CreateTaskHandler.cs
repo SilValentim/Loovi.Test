@@ -42,7 +42,7 @@ namespace Loovi.Test.Application.Tasks.CreateTask
 
             var task = _mapper.Map<TaskItem>(command);
 
-            task.UpdatedAt = task.CreatedAt = DateTime.Now;
+            task.UpdatedAt = task.CreatedAt = DateTime.UtcNow;
             task.Status = TaskItemStatus.Pending;
 
             var createdTask = await _taskRepository.CreateAsync(task, cancellationToken);

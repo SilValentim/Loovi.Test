@@ -12,7 +12,9 @@ namespace Loovi.Test.WebApi.Features.Tasks.UpdateTask
         public TaskProfile()
         {
             // Map CreateTaskResult to CreateTaskResponse
-            CreateMap<TaskResult, TaskResponse>();
+            CreateMap<TaskResult, TaskResponse>()
+                .ForMember(dest => dest.CreationDate, opt => opt.MapFrom(src => src.CreatedAt));
+
             CreateMap<PaginatedResult<TaskResult>, PaginatedResponse<TaskResponse>>();
         }
     }

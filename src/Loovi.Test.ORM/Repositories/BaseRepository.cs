@@ -42,14 +42,16 @@ namespace Loovi.Test.ORM.Repositories
 
                 return await _context.Set<Entity>()
                     .FirstOrDefaultAsync(
-                    e => e.Id.CompareTo(id) == 0 &&
-                         ((IUserIdentity)e).UserId == userId,
-                    cancellationToken);
+                        e => e.Id.CompareTo(id) == 0 &&
+                             ((IUserIdentity)e).UserId == userId &&
+                             e.Active,
+                        cancellationToken);
             }
             else
             {
                 return await _context.Set<Entity>()
-                    .FirstOrDefaultAsync(o => o.Id.CompareTo(id) == 0, cancellationToken);
+                    .FirstOrDefaultAsync(
+                        e => e.Id.CompareTo(id) == 0 && e.Active, cancellationToken);
             }
         }
 
@@ -209,6 +211,8 @@ namespace Loovi.Test.ORM.Repositories
         {
             var expressionFilter = PredicateBuilder.New<Entity>(true);
 
+            expressionFilter = expressionFilter.And(x => x.Active);
+            
             if (typeof(IUserIdentity).IsAssignableFrom(typeof(Entity)))
             {
                 expressionFilter = expressionFilter.And(x =>
@@ -247,6 +251,34 @@ namespace Loovi.Test.ORM.Repositories
                             else
                             {
                                 innerPredicate = innerPredicate.Or(p => EF.Property<string>(p, property.Name) == value);
+                            }
+                        }
+                        else if (property.PropertyType == typeof(DateTime) || property.PropertyType == typeof(DateTime?))
+                        {
+                            if (value.StartsWith(">="))
+                            {
+                                var val = DateTime.Parse(value[2..]);
+                                innerPredicate = innerPredicate.Or(p => EF.Property<DateTime>(p, property.Name) >= val);
+                            }
+                            else if (value.StartsWith("<="))
+                            {
+                                var val = DateTime.Parse(value[2..]);
+                                innerPredicate = innerPredicate.Or(p => EF.Property<DateTime>(p, property.Name) <= val);
+                            }
+                            else if (value.StartsWith(">"))
+                            {
+                                var val = DateTime.Parse(value[1..]);
+                                innerPredicate = innerPredicate.Or(p => EF.Property<DateTime>(p, property.Name) > val);
+                            }
+                            else if (value.StartsWith("<"))
+                            {
+                                var val = DateTime.Parse(value[1..]);
+                                innerPredicate = innerPredicate.Or(p => EF.Property<DateTime>(p, property.Name) < val);
+                            }
+                            else
+                            {
+                                var val = DateTime.Parse(value);
+                                innerPredicate = innerPredicate.Or(p => EF.Property<DateTime>(p, property.Name) == val);
                             }
                         }
                         else
@@ -291,11 +323,11 @@ namespace Loovi.Test.ORM.Repositories
                     {
                         entityQueryable = isFirstOrder
                             ? (descending
-                                ? entityQueryable.OrderByDescending(p => EF.Property<object>(p, propertyName))
-                                : entityQueryable.OrderBy(p => EF.Property<object>(p, propertyName)))
+                                ? entityQueryable.OrderByDescending(p => EF.Property<object>(p, property.Name))
+                                : entityQueryable.OrderBy(p => EF.Property<object>(p, property.Name)))
                             : (descending
-                                ? ((IOrderedQueryable<Entity>)entityQueryable).ThenByDescending(p => EF.Property<object>(p, propertyName))
-                                : ((IOrderedQueryable<Entity>)entityQueryable).ThenBy(p => EF.Property<object>(p, propertyName)));
+                                ? ((IOrderedQueryable<Entity>)entityQueryable).ThenByDescending(p => EF.Property<object>(p, property.Name))
+                                : ((IOrderedQueryable<Entity>)entityQueryable).ThenBy(p => EF.Property<object>(p, property.Name)));
 
                         isFirstOrder = false;
                     }
@@ -330,7 +362,7 @@ namespace Loovi.Test.ORM.Repositories
 
             var result = new Paginated<Entity>
             {
-                Data = paginatedProducts,
+                Items = paginatedProducts,
                 TotalItems = total,
                 CurrentPage = page,
                 TotalPages = totalPages

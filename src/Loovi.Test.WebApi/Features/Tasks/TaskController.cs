@@ -49,7 +49,7 @@ namespace Loovi.Test.WebApi.Controllers
             var response = await _mediator.Send(command, cancellationToken);
 
 
-            return Created(response, "Task created successfully");
+            return Created(_mapper.Map<TaskResponse>(response), "Task created successfully");
         }
 
         /// <summary>

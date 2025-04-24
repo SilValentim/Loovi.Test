@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Loovi.Test.WebApi.Features.Auth
 {
     [ApiController]
-    [Route("api/v1/[controller]")]
+    [Route("api/[controller]")]
     public class AuthController : BaseController
     {
         public AuthController(IMediator mediator, IMapper mapper)
@@ -29,7 +29,7 @@ namespace Loovi.Test.WebApi.Features.Auth
         {
             var result = await _mediator.Send(new AuthenticateUserCommand(request.Username, request.Password));
             return Ok(
-                ApiResponse<AuthResponse>.Ok(_mapper.Map<AuthResponse>(result)),
+                _mapper.Map<AuthResponse>(result),
                 "Authentication successful");
         }
     }

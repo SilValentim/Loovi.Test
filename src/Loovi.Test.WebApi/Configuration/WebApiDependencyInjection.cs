@@ -3,6 +3,7 @@ using Loovi.Test.Common.Auth.Interfaces;
 using Loovi.Test.WebApi.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 
 namespace Loovi.Test.WebApi.Configuration
@@ -22,7 +23,33 @@ namespace Loovi.Test.WebApi.Configuration
 
 
             services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "Enter the JWT token in the format: Bearer {your_token_here}",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
+            });
 
             services.AddHttpContextAccessor();
             services.AddScoped<IUserAccessor, HttpUserAccessor>();

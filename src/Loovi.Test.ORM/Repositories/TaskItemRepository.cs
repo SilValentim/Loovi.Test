@@ -45,18 +45,17 @@ namespace Loovi.Test.ORM.Repositories
         {
             var currentlyEntity = await GetByIdAsync(updatedEntity.Id, cancellationToken);
 
+            var currentUserId = _userAccessor.GetUserId();
+            if (currentlyEntity.UserId != currentUserId)
+            {
+                throw new UnauthorizedAccessException("Cannot modify entity owned by another user.");
+            }
+
             updatedEntity.Status = currentlyEntity.Status;
             updatedEntity.CreatedAt = currentlyEntity.CreatedAt;
             updatedEntity.Active = currentlyEntity.Active;
             updatedEntity.UpdatedAt = DateTime.UtcNow;
-
-
-            var currentUserId = _userAccessor.GetUserId();
-            if (currentlyEntity.UserId != currentUserId)
-            {
-                //TODO Add log of possible security attack.
-                throw new UnauthorizedAccessException("Cannot modify entity owned by another user.");
-            }
+            updatedEntity.UserId = currentUserId;
 
 
             if (currentlyEntity != null)
