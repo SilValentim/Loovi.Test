@@ -7,14 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Loovi.Test.Application.Tasks.CreateTask
+namespace Loovi.Test.Application.Tasks.GetTask
 {
-    class TaskProfile : Profile
+    class GetTaskProfile : Profile
     {
-        public TaskProfile()
+        public GetTaskProfile()
         {
-            CreateMap<TaskItem, TaskResult>();
-            CreateMap<TaskItem, TaskResult>();
+            CreateMap<GetTaskCommand, TaskItem>();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Loovi.Test.Domain.Entities;
+﻿using Loovi.Test.Domain.Common;
+using Loovi.Test.Domain.Entities;
 using Loovi.Test.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -38,7 +39,9 @@ namespace Loovi.Test.ORM.Repositories
             var currentlyEntity = await GetByIdAsync(updatedEntity.Id, cancellationToken);
 
             updatedEntity.Status = currentlyEntity.Status;
-            updatedEntity.CreationDate = currentlyEntity.CreationDate;
+            updatedEntity.CreatedAt = currentlyEntity.CreatedAt;
+            updatedEntity.Active = currentlyEntity.Active;
+            updatedEntity.UpdatedAt = DateTime.UtcNow;
 
             if (currentlyEntity != null)
             {
@@ -47,6 +50,13 @@ namespace Loovi.Test.ORM.Repositories
             }
 
             return updatedEntity;
+        }
+
+        public async Task<Paginated<TaskItem>> GetTasksAsync(IDictionary<string, string[]> filters,
+            CancellationToken cancellationToken = default)
+        {
+            var result = await GetList(filters, cancellationToken);
+            return result;
         }
     }
 }

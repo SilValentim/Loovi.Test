@@ -58,6 +58,9 @@ namespace Loovi.Test.ORM.Repositories
         public virtual async Task<Entity> UpdateAsync(Entity updatedEntity, CancellationToken cancellationToken = default)
         {
             var currentlyEntity = await GetByIdAsync(updatedEntity.Id, cancellationToken);
+            updatedEntity.CreatedAt = currentlyEntity.CreatedAt;
+            updatedEntity.Active = currentlyEntity.Active;
+            updatedEntity.UpdatedAt = DateTime.UtcNow;
 
             if (currentlyEntity != null)
             {
@@ -69,12 +72,30 @@ namespace Loovi.Test.ORM.Repositories
         }
 
         /// <summary>
+        /// Deletes a entity from the database
+        /// </summary>
+        /// <param name="id">The unique identifier of the entity to delete</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>The deleted entity</returns>
+        public async Task<Entity> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+        {
+            var entity = await GetByIdAsync(id, cancellationToken);
+
+            if (entity != null)
+            {
+                entity.Deactivate();
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+            return entity;
+        }
+
+        /// <summary>
         /// Retrieves a paginated list of entities based on filters and ordering.
         /// </summary>
         /// <param name="filters">A dictionary of filters to apply to the query.</param>
         /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
         /// <returns>A paginated list of entities.</returns>
-        public async Task<Paginated<Entity>> GetList(
+        protected async Task<Paginated<Entity>> GetList(
             IDictionary<string, string[]> filters,
             CancellationToken cancellationToken)
         {
