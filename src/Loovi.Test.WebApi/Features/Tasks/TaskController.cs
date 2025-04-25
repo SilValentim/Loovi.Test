@@ -96,6 +96,7 @@ namespace Loovi.Test.WebApi.Controllers
         ///// <returns>The list of tasks.</returns>
         [HttpGet]
         [ProducesResponseType(typeof(ApiResponse<PaginatedResponse<TaskResponse>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<PaginatedResponse<TaskResponse>>), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ApiResponse<PaginatedResponse<TaskResponse>>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetTasks(
             [FromQuery] IDictionary<string, string[]> parameters,

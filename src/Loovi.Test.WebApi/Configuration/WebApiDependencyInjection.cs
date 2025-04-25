@@ -1,6 +1,7 @@
 ﻿using Loovi.Test.Common.Auth.Configuration;
 using Loovi.Test.Common.Auth.Interfaces;
 using Loovi.Test.WebApi.Auth;
+using Loovi.Test.WebApi.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -49,6 +50,8 @@ namespace Loovi.Test.WebApi.Configuration
                         Array.Empty<string>()
                     }
                 });
+
+                c.OperationFilter<DocumentTaskFiltersOperationFilter>();
             });
 
             services.AddHttpContextAccessor();
