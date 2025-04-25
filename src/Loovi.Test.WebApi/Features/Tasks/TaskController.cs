@@ -14,6 +14,8 @@ using Loovi.Test.WebApi.Common;
 using Loovi.Test.Application.Tasks.ListTasks;
 using Loovi.Test.Application.Tasks.DeleteTask;
 using Microsoft.AspNetCore.Authorization;
+using Loovi.Test.Application.Tasks.UpdateTaskStatusToComplete;
+using Loovi.Test.Application.Tasks.UpdateTaskStatusToInProgress;
 
 namespace Loovi.Test.WebApi.Controllers
 {
@@ -116,7 +118,7 @@ namespace Loovi.Test.WebApi.Controllers
         /// <param name="id">The unique identifier of the task to delete.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Success response if the task was deleted.</returns>
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:Guid}")]
         [ProducesResponseType(typeof(ApiResponse<TaskResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<TaskResponse>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<TaskResponse>), StatusCodes.Status404NotFound)]
@@ -126,6 +128,30 @@ namespace Loovi.Test.WebApi.Controllers
             var task = await _mediator.Send(command, cancellationToken);
 
             return Ok(_mapper.Map<TaskResponse>(task),"Task deleted successfully");
+        }
+
+        [HttpPatch("{id:Guid}/complete")]
+        [ProducesResponseType(typeof(ApiResponse<TaskResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<TaskResponse>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<TaskResponse>), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> ChangeTaskStatusToComplete([FromRoute] Guid id, CancellationToken cancellationToken)
+        {
+            var command = _mapper.Map<UpdateTaskStatusToCompleteCommand>(id);
+            var task = await _mediator.Send(command, cancellationToken);
+
+            return Ok(_mapper.Map<TaskResponse>(task), "Task status changed successfully");
+        }
+
+        [HttpPatch("{id:Guid}/inprogress")]
+        [ProducesResponseType(typeof(ApiResponse<TaskResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<TaskResponse>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<TaskResponse>), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> ChangeTaskStatusToInProgress([FromRoute] Guid id, CancellationToken cancellationToken)
+        {
+            var command = _mapper.Map<UpdateTaskStatusToInProgressCommand>(id);
+            var task = await _mediator.Send(command, cancellationToken);
+
+            return Ok(_mapper.Map<TaskResponse>(task), "Task status changed successfully");
         }
     }
 }

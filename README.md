@@ -113,7 +113,7 @@ Durante o desenvolvimento alguns itens foram desenvolvidos
  levemente diferentes do solicitado, afim de padronizar e/ou implementar melhorias.
 - Nomes das propriedades das tarefas foram traduzidos para inglês.
 - Implementado um endpoint para get de tarefa pelo id.
-
+- Implementado dois endpoints para mudança de status da task.
 
 ## 🚀 Como rodar o projeto
 
