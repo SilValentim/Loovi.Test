@@ -29,6 +29,16 @@ namespace Loovi.Test.Domain.Entities
             /// Current status of the task, indicating its progress.
             /// </summary>
             public TaskItemStatus Status { get; set; }
+
+        public void ChangeTaskStatusToInProgress()
+        {
+            Status = TaskItemStatus.InProgress;
         }
+
+        public void ChangeTaskStatusToCompleted()
+        {
+            Status = TaskItemStatus.Completed;
+        }
+    }
 
 }

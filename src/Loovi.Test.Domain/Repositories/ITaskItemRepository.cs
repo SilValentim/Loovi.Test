@@ -15,5 +15,9 @@ namespace Loovi.Test.Domain.Repositories
 
         Task<Paginated<TaskItem>> GetTasksAsync(IDictionary<string, string[]> filters,
             CancellationToken cancellationToken = default);
+
+        Task<TaskItem> ChangeTaskStatusToInProgressAsync(Guid id, CancellationToken cancellationToken = default);
+
+        Task<TaskItem> ChangeTaskStatusToCompletedAsync(Guid id, CancellationToken cancellationToken = default);
     }
 }

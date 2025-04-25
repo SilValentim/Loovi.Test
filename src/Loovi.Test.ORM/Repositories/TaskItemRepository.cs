@@ -73,5 +73,41 @@ namespace Loovi.Test.ORM.Repositories
             var result = await GetList(filters, cancellationToken);
             return result;
         }
+
+        public async Task<TaskItem> ChangeTaskStatusToInProgressAsync(Guid id, CancellationToken cancellationToken = default)
+        {
+            var entity = await GetByIdAsync(id, cancellationToken);
+
+
+            if (entity != null)
+            {
+                entity.ChangeTaskStatusToInProgress();
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+            else
+            {
+                throw new KeyNotFoundException("Task not found.");
+            }
+
+            return entity;
+        }
+
+        public async Task<TaskItem> ChangeTaskStatusToCompletedAsync(Guid id, CancellationToken cancellationToken = default)
+        {
+            var entity = await GetByIdAsync(id, cancellationToken);
+
+
+            if (entity != null)
+            {
+                entity.ChangeTaskStatusToCompleted();
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+            else
+            {
+                throw new KeyNotFoundException("Task not found.");
+            }
+
+            return entity;
+        }
     }
 }
