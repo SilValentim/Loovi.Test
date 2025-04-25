@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Loovi.Test.Application.Tasks.GetTask
 {
-    public class GetTaskCommand : IRequest<TaskResult>
+    public class GetTaskByIdQuery : IRequest<TaskResult>
     {
-        public GetTaskCommand(Guid id)
+        public GetTaskByIdQuery(Guid id)
         {
             Id = id;
         }

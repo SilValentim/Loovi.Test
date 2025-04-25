@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Loovi.Test.Application.Tasks.GetTask
 {
-    public class GetTaskValidator : AbstractValidator<GetTaskCommand>
+    public class GetTaskByIdValidator : AbstractValidator<GetTaskByIdQuery>
     {
-        public GetTaskValidator()
+        public GetTaskByIdValidator()
         {
             RuleFor(request => request.Id)
                 .NotNull().WithMessage("The Id is required.")

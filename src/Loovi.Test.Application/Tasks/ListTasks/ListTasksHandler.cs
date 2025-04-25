@@ -13,7 +13,7 @@ namespace Loovi.Test.Application.Tasks.ListTasks
     /// <summary>
     /// Handler for processing ListTasksCommand requests.
     /// </summary>
-    public class ListTasksHandler : IRequestHandler<ListTasksCommand, PaginatedResult<TaskResult>>
+    public class ListTasksHandler : IRequestHandler<ListTasksQuery, PaginatedResult<TaskResult>>
     {
         private readonly ITaskItemRepository _taskRepository;
         private readonly IMapper _mapper;
@@ -35,7 +35,7 @@ namespace Loovi.Test.Application.Tasks.ListTasks
         /// <param name="command">The ListTasks command.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>The updated task details.</returns>
-        public async Task<PaginatedResult<TaskResult>> Handle(ListTasksCommand command, CancellationToken cancellationToken)
+        public async Task<PaginatedResult<TaskResult>> Handle(ListTasksQuery command, CancellationToken cancellationToken)
         {
             var listProducts = await _taskRepository.GetTasksAsync(
              command.Parameters, cancellationToken);

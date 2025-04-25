@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Loovi.Test.Application.Tasks.ListTasks
 {
-    public class ListTasksCommand : IRequest<PaginatedResult<TaskResult>>
+    public class ListTasksQuery : IRequest<PaginatedResult<TaskResult>>
     {
-        public ListTasksCommand(IDictionary<string, string[]> parameters)
+        public ListTasksQuery(IDictionary<string, string[]> parameters)
         {
             Parameters = parameters;
         }
