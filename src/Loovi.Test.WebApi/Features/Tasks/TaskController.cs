@@ -82,7 +82,7 @@ namespace Loovi.Test.WebApi.Controllers
         [ProducesResponseType(typeof(ApiResponse<TaskResponse>), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetTask([FromRoute] Guid id, CancellationToken cancellationToken)
         {
-            var command = _mapper.Map<GetTaskCommand>(id);
+            var command = _mapper.Map<GetTaskByIdQuery>(id);
             var response = await _mediator.Send(command, cancellationToken);
 
             return Ok(_mapper.Map<TaskResponse>(response), "Task retrieved successfully");
@@ -101,7 +101,7 @@ namespace Loovi.Test.WebApi.Controllers
             [FromQuery] IDictionary<string, string[]> parameters,
             CancellationToken cancellationToken)
         {
-            var command = new ListTasksCommand(parameters);
+            var command = new ListTasksQuery(parameters);
             var response = await _mediator.Send(command, cancellationToken);
 
             return Ok(

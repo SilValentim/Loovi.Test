@@ -29,7 +29,7 @@ namespace Loovi.Test.Application.Tasks.UpdateTask
             // DueDate: Required and must be a future date
             RuleFor(request => request.DueDate)
                 .NotEmpty().WithMessage("The DueDate is required.")
-                .GreaterThan(DateTime.Now).WithMessage("The DueDate must be a future date.");
+                .GreaterThan(x => DateTime.UtcNow).WithMessage("The DueDate must be a future date.");
         }
     }
 }

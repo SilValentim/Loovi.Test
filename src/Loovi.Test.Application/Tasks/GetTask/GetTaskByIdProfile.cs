@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace Loovi.Test.Application.Tasks.GetTask
 {
-    class GetTaskProfile : Profile
+    class GetTaskByIdProfile : Profile
     {
-        public GetTaskProfile()
+        public GetTaskByIdProfile()
         {
-            CreateMap<GetTaskCommand, TaskItem>();
+            CreateMap<GetTaskByIdQuery, TaskItem>();
         }
     }
 }
